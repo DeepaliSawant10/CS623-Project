@@ -1,0 +1,32 @@
+def update_depot_name():
+    conn = psycopg2.connect(
+        host="localhost",
+        database="postgres",
+        user="postgres",
+        password="Root@2024"
+    )
+
+    try:
+        conn.set_isolation_level(3)
+        conn.autocommit = False
+        cur = conn.cursor()
+
+        # Transaction 6: Change depot D1 name to DD1 in Depot table
+        cur.execute("""
+            UPDATE depot SET depid = 'DD1' WHERE depid = 'd1'
+        """)
+
+        # Commit the transaction
+        conn.commit()
+        print("Depot D1 renamed to DD1.")
+
+    except (Exception, psycopg2.DatabaseError) as error:
+        print("Error occurred:", error)
+        conn.rollback()
+
+    finally:
+        cur.close()
+        conn.close()
+        print("PostgreSQL connection closed.")
+
+update_depot_name()
