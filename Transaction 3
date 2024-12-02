@@ -1,0 +1,32 @@
+def update_product_name():
+    conn = psycopg2.connect(
+        host="localhost",
+        database="postgres",
+        user="postgres",
+        password="Root@2024"
+    )
+
+    try:
+        conn.set_isolation_level(3)
+        conn.autocommit = False
+        cur = conn.cursor()
+
+        # Transaction 5: Change product P1 name to PP1 in Product table
+        cur.execute("""
+            UPDATE product SET prodid = 'PP1' WHERE prodid = 'p1'
+        """)
+
+        # Commit the transaction
+        conn.commit()
+        print("Product P1 renamed to PP1.")
+
+    except (Exception, psycopg2.DatabaseError) as error:
+        print("Error occurred:", error)
+        conn.rollback()
+
+    finally:
+        cur.close()
+        conn.close()
+        print("PostgreSQL connection closed.")
+
+update_product_name()
