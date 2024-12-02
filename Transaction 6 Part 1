@@ -1,0 +1,34 @@
+def add_depot():
+    conn = psycopg2.connect(
+        host="localhost",
+        database="postgres",
+        user="postgres",
+        password="Root@2024"
+    )
+
+    try:
+        conn.set_isolation_level(3)
+        conn.autocommit = False
+        cur = conn.cursor()
+
+        # Transaction 3: Add depot (D100, Chicago, 100) in Depot
+        cur.execute("""
+            INSERT INTO depot (depid, addr, volume) 
+            VALUES ('D100', 'Chicago', 100)
+            ON CONFLICT (depid) DO NOTHING
+        """)
+
+        # Commit the transaction
+        conn.commit()
+        print("Depot D100 added successfully!")
+
+    except (Exception, psycopg2.DatabaseError) as error:
+        print("Error occurred:", error)
+        conn.rollback()
+
+    finally:
+        cur.close()
+        conn.close()
+        print("PostgreSQL connection closed.")
+
+add_depot()
